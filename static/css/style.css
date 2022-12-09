@@ -1,0 +1,40 @@
+
+div.scrollmenu {
+    overflow: auto;
+    white-space: nowrap !important;
+}
+
+  
+.scrollmenu .card  {
+    display: inline-block;
+    text-align: left;
+    padding: 14px;
+    margin:6px;
+    text-decoration: none;
+    width: 31.5rem;
+    height: auto;
+    box-shadow: 2px 2px 4px #000000;
+  }
+
+.card-im
+{
+    width: 21rem;
+    height: 20rem;
+
+}
+
+p.card-text
+{
+    white-space: pre-wrap !important;
+}
+  
+.card-body span{
+    float: right;
+}
+
+.carousel-item img{
+    height: 30rem;
+}
+
+
+
