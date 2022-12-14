@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Category, Image, Food, Item, Reastaurant
+from .models import Category, Image, Food, Item, Restaurant, Cart
 
-@admin.register(Reastaurant)
-class AdminReastaurant(admin.ModelAdmin):
+@admin.register(Restaurant)
+class AdminRestaurant(admin.ModelAdmin):
     list_display = ['name','rating']
 
 admin.site.register(Image)
@@ -18,3 +18,8 @@ class AdminItem(admin.ModelAdmin):
 @admin.register(Category)
 class AdminCategory(admin.ModelAdmin):
     list_display = ['name']
+
+
+@admin.register(Cart)
+class AdminCart(admin.ModelAdmin):
+    list_display = ['food']

@@ -15,16 +15,17 @@
           <form class="register-form" method='POST'>
             {% csrf_token %}
             {% if error == True %}
-              <p style="color:red";>Username is already available!!!</p>
+              <p style="color:red";>Email is already available!!!</p>
             {% endif %}
-            <input type="text" name='first' placeholder="first name"/>
-            <input type="text" name='last' placeholder="last name"/>
-            <input type="text" name='username' placeholder='username'>
+            <input type="email" name='email' placeholder='email'>
             <input type="password" name='password' placeholder="password"/>
-            <input type="text" name='email' placeholder="email address"/>
-            <input type="text" name='city' placeholder='city'>
-            <input type="phone" name='phone' placeholder='phone'>
-            <button type = 'submit'>create</button>
+            <input type="password" name='cpassword' placeholder="confirm password"/>
+
+            {% if same_password == True %}
+              <p style="color:red";>Password and confirm password do not match!!1</p>
+            {% endif %}
+
+            <button type = 'submit' onclick="validateUser()">create</button>
             <p class="message">Already registered? <a href=" {% url 'user:login' %} ">Sign In</a></p>
           </form>
         </div>

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    
+    <!-- Reastoreant -->
+
+<div class="slidebar">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block w-50" src="{{restaurant.image.all.0.image.url}}" alt="First slide">
+    </div>
+  </div>
+</div>
+
+    
+<div class="resto-info">
+    <h2>{{restaurant.name}}</h2>
+    <h3><span>{{restaurant.rating}}  <i class="fa-solid fa-star"></i></span> </h3>
+    <p class="restro-txt">Address :{{restaurant.address.area}},{{restaurant.address.city}},{{restaurant.address.state}},{{restaurant.address.country}}<br/>PinCode :{{restaurant.address.pincode}}<br/>Phone :{{restaurant.phone}}</p>
+</div>
+<hr>
+
+        
+<div class="deliciousfood">
+    <h3>Menu</h3>
+    <div class="scrollmenu">
+
+      {% for food in restaurant.food.all  %}
+      
+      <div class="card">
+        <a href="">
+          <img class="card-im card-img-top" src="{{food.image.all.0.image.url}}" alt="Card image cap">
+        </a>
+        <div class="card-body">
+          <h5 class="card-title"> {{food.name}} <span> <a class="btn btn-secondary" style="margin-right:40px;" href="{% url 'reastaurent:add_to_cart' restaurant.id food.id %}">Add to Cart</a> <i class="fa-solid fa-indian-rupee-sign"></i> {{food.price}}  </span></h5>
+        </div>
+      </div>
+      {% endfor %} 
+    </div>
+</div>
+
+{% endblock content %}
+
