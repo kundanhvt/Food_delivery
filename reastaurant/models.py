@@ -41,7 +41,13 @@ class Restaurant(models.Model):
 
 
 class Cart(models.Model):
-    food = models.OneToOneField(Food, on_delete=models.SET_NULL, null=True, blank=True)
+    food = models.ForeignKey(Food, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0)
     user = models.ForeignKey(users, on_delete=models.CASCADE, null=True,blank=True, related_name="all_cart_food")
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
+
+class Order(models.Model):
+    price = models.IntegerField(default=0)
+    user = models.ForeignKey(users, on_delete=models.SET_NULL, null=True, blank=True, related_name="all_order_user")
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, blank=True,related_name="all_order_restaurant")
+    payment = models.CharField(max_length=20)

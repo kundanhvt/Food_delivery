@@ -19,7 +19,7 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="#">Veg Only</a>
             <a class="dropdown-item" href="#">Non Veg</a>
-            <a class="dropdown-item" href="#">Both Veg & non Veg</a>
+            <a class="dropdown-item" href="{% url 'reastaurent:view_all_food' %}">Both Veg & non Veg</a>
           </div>
         </li>
         {% if  request.user.is_authenticated %}

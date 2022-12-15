@@ -82,7 +82,8 @@
           
                   <div class="card">
                     <div class="card-body">
-                      <button type="button" class="btn btn-warning btn-block btn-lg">Complete Order</button>
+                      <a href="{% url 'reastaurent:shipping' %}"><button type="button" class="btn btn-warning btn-block btn-lg">Complete Order</button></a>
+                      
                     </div>
                   </div>
           
@@ -117,8 +118,6 @@
         }
         solve()
           {% endif %}
-
-     
 
         function checkUser(){
           return confirm('want to delete!!!');

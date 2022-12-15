@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="slidebar">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img class="d-block w-50" src="{{food.image.all.0.image.url}}" alt="First slide">
+      </div>
+    </div>
+  </div>
+  
+      
+  <div class="resto-info">
+      <h2>{{food.name}}</h2>
+      <h3><i class="fa fa-inr" aria-hidden="true"> {{food.price}}</i></h3>
+  </div>
+  <hr>
+  
+          
+  <div class="deliciousfood">
+      <h3>This food is available on these Restaurant</h3>
+      <div class="scrollmenu">
+        {% for restaurant in food.restaurants_foods.all  %}
+        <div class="card">
+          <a href="{% url 'reastaurent:restaurant' restaurant.id %}">
+            <img class="card-im card-img-top" src="{{restaurant.image.all.0.image.url}}" alt="Card image cap">
+          </a>
+          <div class="card-body">
+            <h5 class="card-title"> {{restaurant.name}} <span> <a class="btn btn-secondary" style="margin-right:40px;" href="{% url 'reastaurent:add_to_cart' restaurant.id food.id %}">Order from here</a></span></h5>
+            <p class="card-text">{{restaurant.address.area}}, {{restaurant.address.city}}</p>
+          </div>
+        </div>
+        {% endfor %} 
+      </div>
+  </div>
+  
+  {% endblock content %}
+  
+  

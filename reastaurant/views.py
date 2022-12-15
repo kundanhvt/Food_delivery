@@ -3,77 +3,138 @@ from .models import Restaurant, Image, Food, Cart
 from user.models import users
 import logging
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
 def restaurant(request, id):
-    print(id)
-    restaurent = Restaurant.objects.get(id=id)
-    
-    return render(request, "restaurant.html",context= {"restaurant": restaurent, "foods":""})
+    try:
+        restaurent = Restaurant.objects.get(id=id)
+        return render(request, "restaurant.html",context= {"restaurant": restaurent, "foods":""})
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
 
 def restaurants(request):
-    restaurants = Restaurant.objects.all().order_by('id')
-    paginator = Paginator(restaurants, 4)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request,'restaurants.html',context={"page_obj":page_obj})
+    try:
+        restaurants = Restaurant.objects.all().order_by('id')
+        paginator = Paginator(restaurants, 4)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request,'restaurants.html',context={"page_obj":page_obj})
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
 
+@login_required(login_url='user:login')
 def cart(request):
-    carts = request.user.all_cart_food.all()
-    total=0
-    for cart in carts:
-        total += cart.quantity * cart.food.price
-    return render(request, "cart.html", context={"carts":carts,"total_price":total})
+    try:
+        carts = request.user.all_cart_food.all()
+        total=0
+        for cart in carts:
+            total += cart.quantity * cart.food.price
+        return render(request, "cart.html", context={"carts":carts,"total_price":total})
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
 
+@login_required(login_url='user:login')
 def add_to_cart(request, res_id, food_id):
-    carts = request.user.all_cart_food.all()
-    if(len(carts)==0):
-        restaurant = Restaurant.objects.get(id=res_id)
-        food = Food.objects.get(id=food_id)
-        cart = Cart(food=food, quantity = 1,user=request.user, restaurant = restaurant)
-        cart.save()
-    else:
-        res = carts[0].restaurant.id
-        if int(res) != int(res_id):
-            carts = request.user.all_cart_food.all()
-            total=0
-            for cart in carts:
-                total += cart.quantity * cart.food.price
-            return render(request, "cart.html", context={"carts":carts,"total_price":total,"cart_is_full":True})
-        else:
-            for cart in carts:
-                if int(cart.food.id) == int(food_id):
-                    cart.quantity = cart.quantity+1
-                    cart.save()
-                    return redirect(reverse('reastaurent:cart'))
+    try:
+        carts = request.user.all_cart_food.all()
+        if(len(carts)==0):
+            restaurant = Restaurant.objects.get(id=res_id)
             food = Food.objects.get(id=food_id)
-            cart = Cart(food=food,quantity=1,user = request.user, restaurant =carts[0].restaurant)
+            cart = Cart(food=food, quantity = 1,user=request.user, restaurant = restaurant)
             cart.save()
-            print(cart)
-    return redirect(reverse('reastaurent:cart'))
+        else:
+            res = carts[0].restaurant.id
+            if int(res) != int(res_id):
+                carts = request.user.all_cart_food.all()
+                total=0
+                for cart in carts:
+                    total += cart.quantity * cart.food.price
+                return render(request, "cart.html", context={"carts":carts,"total_price":total,"cart_is_full":True})
+            else:
+                for cart in carts:
+                    if int(cart.food.id) == int(food_id):
+                        cart.quantity = cart.quantity+1
+                        cart.save()
+                        return redirect(reverse('reastaurent:cart'))
+                food = Food.objects.get(id=food_id)
+                cart = Cart(food=food,quantity=1,user = request.user, restaurant =carts[0].restaurant)
+                cart.save()
+                print(cart)
+        return redirect(reverse('reastaurent:cart'))
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
 
 
+@login_required(login_url='user:login')
 def decrement_quantity(request,cart_id):
-    cart = Cart.objects.get(id=cart_id)
-    if cart.quantity == 1:
-        pass
-    else:
-        cart.quantity -=1
-        cart.save()
-    return redirect(reverse('reastaurent:cart'))
+    try:
+        cart = Cart.objects.get(id=cart_id)
+        if cart.quantity == 1:
+            pass
+        else:
+            cart.quantity -=1
+            cart.save()
+        return redirect(reverse('reastaurent:cart'))
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
 
+@login_required(login_url='user:login')
 def increment_quantity(request, cart_id):
-    cart = Cart.objects.get(id=cart_id)
-    cart.quantity +=1
-    cart.save()
-    return redirect(reverse('reastaurent:cart'))
+    try:
+        cart = Cart.objects.get(id=cart_id)
+        cart.quantity +=1
+        cart.save()
+        return redirect(reverse('reastaurent:cart'))
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
 
+@login_required(login_url='user:login')
 def delete_cart(request,cart_id):
-    cart = Cart.objects.get(id = cart_id)
-    cart.delete()
-    return redirect(reverse('reastaurent:cart'))
-
-def delete_all_cart(request):
-    carts = request.user.all_cart_food.all()
-    for cart in carts:
+    try:
+        cart = Cart.objects.get(id = cart_id)
         cart.delete()
-    return redirect(reverse('reastaurent:restaurant_all'))
+        return redirect(reverse('reastaurent:cart'))
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
+
+
+@login_required(login_url='user:login')
+def delete_all_cart(request):
+    try:
+        carts = request.user.all_cart_food.all()
+        for cart in carts:
+            cart.delete()
+        return redirect(reverse('reastaurent:restaurant_all'))
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
+
+
+def food(request,id):
+    try:
+        food = Food.objects.get(id=id)
+        return render(request, 'food.html',context={"food":food})
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
+
+def view_all_food(request):
+    try:
+        foods = Food.objects.all().order_by('id')
+        paginator = Paginator(foods, 4)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request,'foods.html',context={"page_obj":page_obj})
+    except Exception as ex:
+        logging.warning(ex)
+        return render(request,'error.html')
+
+def shipping(request):
+    return render(request,'shipping.html')
