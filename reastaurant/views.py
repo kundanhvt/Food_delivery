@@ -95,9 +95,10 @@ def increment_quantity(request, cart_id):
         return render(request,'error.html')
 
 @login_required(login_url='user:login')
-def delete_cart(request,cart_id):
+def delete_cart(request):
     try:
-        cart = Cart.objects.get(id = cart_id)
+        id = request.GET.get('id')
+        cart = Cart.objects.get(id=id)
         cart.delete()
         return redirect(reverse('reastaurent:cart'))
     except Exception as ex:

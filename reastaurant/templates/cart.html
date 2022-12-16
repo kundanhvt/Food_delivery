@@ -51,7 +51,7 @@
                         </div>
 
                         <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                          <a href="{% url 'reastaurent:delete_cart' cart.id %}" onclick="return checkUser()" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                          <button type="button" onclick="checkUser({{cart.id}})" class="text-danger btn"><i class="fas fa-trash fa-lg"></i></button>
                         </div>
                       </div>
                     </div>
@@ -117,8 +117,19 @@
         solve()
           {% endif %}
 
-        function checkUser(){
-          return confirm('want to delete!!!');
+        function checkUser(id){
+          swal({
+            title: "Are you sure?",
+            text: "want to delete item !!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+              window.location = '{% url 'reastaurent:delete_cart'%}'+'?id='+id;
+            }
+          });
         }
       </script>
 
