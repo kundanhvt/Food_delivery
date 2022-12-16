@@ -104,7 +104,7 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                         <div class="form-group">
-                            <h6><i class="fa fa-inr" aria-hidden="true"> 800</i></h6>
+                            <h6><i class="fa fa-inr" aria-hidden="true"> {{subtotal}}</i></h6>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -114,7 +114,7 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                         <div class="form-group">
-                            <h6><i class="fa fa-inr" aria-hidden="true"> 100</i></h6>
+                            <h6><i class="fa fa-inr" aria-hidden="true"> {{shipping}}</i></h6>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -124,16 +124,21 @@
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                         <div class="form-group">
-                            <h6><i class="fa fa-inr" aria-hidden="true"></i> 900</h6>
+                            <h6><i class="fa fa-inr" aria-hidden="true"></i> {{total}}</h6>
                         </div>
                     </div>
                 </div>
 
                 <div class="row gutters">
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+                            <label class="form-check-label" for="flexCheckChecked">
+                              COD (cash on delivery)
+                            </label>
+                          </div>
                         <div class="text">
-                            <input type="button" id="submit" name="submit" class="btn btn-primary" onclick="" value="Checkout" >
-                            <a href="" id="submit" name="submit" class="btn btn-secondary">COD</a>
+                            <input type="button" id="submit" name="submit" class="btn btn-primary" onclick="orderplaced()" value="Checkout" >
                         </div>
                     </div>
                 </div>
@@ -146,6 +151,8 @@
     {% endblock content %}
 
     {% block javascript %}
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
         <script type="text/javascript">
             let first_name,last_name,phone,area,city,state,pincode,country
             function update_profile(){
@@ -157,9 +164,7 @@
                 state = $("#sTate").val();
                 country = $("#country").val();
                 pincode = $("#zIp").val();
-                fine=None
                 let data = new FormData();
-                data.append("file",None);
                 data.append("csrfmiddlewaretoken", "{{csrf_token}}");
                 data.append("first_name",first_name);
                 data.append("last_name",last_name);
@@ -176,6 +181,42 @@
                     processData:false,
                     contentType:false,
                     data:data
+                });
+            }
+
+            function orderplaced(){
+                let check=$('#flexCheckChecked').is(":checked")
+                let payment
+                let data = new FormData();
+                data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+                if(check){
+                    payment = 'cash on delivery';
+                }else{
+                    payment = 'online payment';
+                }
+                data.append('payment',payment)
+
+                $.ajax({
+                    type: 'POST',
+                    url:'{% url 'reastaurent:shipping' %}',
+                    data:data,
+                    success:function(e){
+                        let text
+                        if(check){
+                            text='Be Ready with cash!!'
+                        }else{
+                            text='Your payment Received!!'
+                        }
+                        swal({
+                            title: "Thanks for order!!",
+                            text: text,
+                            icon: "success",
+                        }).then((e)=>{
+                            window.location= '{% url 'user:home' %}'
+                        });
+                    },
+                    processData:false,
+                    contentType:false,
                 });
             }
         </script>

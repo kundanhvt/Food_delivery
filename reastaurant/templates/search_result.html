@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% for page in page_obj %}
+
+<div class="card mb-3">
+    <div class="row no-gutters">
+
+        {% if page.0 == 'food' %}
+
+
+      <div class="col-md-4">
+        <a href="{% url 'reastaurent:food' page.1.id %}"><img src="{{page.1.image.all.0.image.url}}" class="card-img" style="max-height: 240px;" alt="..."></a>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+            <a href="" class ="text-decoration-none" style="color:black;" ><h5 class="card-title">{{page.1.name}} </h5></a>
+            <p class="card-text">Price : <i class="fa fa-inr" aria-hidden="true"> {{page.1.price}} </i></p>
+        </div>
+      </div>
+
+      {% else %}
+
+      <div class="col-md-4">
+        <a href="{% url 'reastaurent:restaurant' page.1.id %}"><img src="{{page.1.image.all.0.image.url}}" class="card-img" style="max-height: 240px;" alt="..."></a>
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+            <a href="" class ="text-decoration-none" style="color:black;" ><h5 class="card-title">{{page.1.name}} </h5></a>
+            <p class="card-text">Address : {{page.1.address.area}},{{page.1.address.city}},{{page.1.address.state}},{{page.1.address.country}}<br/>PinCode :{{page.1.address.pincode}}<br/>Phone :{{page.1.phone}}</p>
+        </div>
+      </div>
+
+      {% endif %}
+    </div>
+  </div>
+
+
+{% endfor %}
+
+<nav aria-label="...">
+    <ul class="pagination">
+        {% if page_obj.has_previous  %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{page_obj.previous_page_number}}" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#"> {{ page_obj.number | add:"-1" }} </a></li>
+
+        {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+        {% endif %}
+
+      <li class="page-item active">
+        <a class="page-link" href="#">{{ page_obj.number }} <span class="sr-only">(current)</span></a>
+      </li>
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="#">{{ page_obj.number | add:"1"}}</a></li>
+
+        <li class="page-item">
+            <a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Next</a>
+        </li>
+      {%  endif %}
+    </ul>
+  </nav>
+
+
+{% endblock content %}

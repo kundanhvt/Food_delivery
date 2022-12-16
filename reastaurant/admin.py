@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Image, Food, Item, Restaurant, Cart
+from .models import Category, Image, Food, Item, Restaurant, Cart, Order
 
 @admin.register(Restaurant)
 class AdminRestaurant(admin.ModelAdmin):
@@ -23,3 +23,7 @@ class AdminCategory(admin.ModelAdmin):
 @admin.register(Cart)
 class AdminCart(admin.ModelAdmin):
     list_display = ['food']
+
+@admin.register(Order)
+class AdminOrder(admin.ModelAdmin):
+    list_display = ['user']

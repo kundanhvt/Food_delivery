@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect, reverse
-from .models import Restaurant, Image, Food, Cart
+from django.shortcuts import render, redirect, reverse, HttpResponse
+from .models import Restaurant, Image, Food, Cart, Order
 from user.models import users
 import logging
 from django.core.paginator import Paginator
@@ -137,4 +137,38 @@ def view_all_food(request):
         return render(request,'error.html')
 
 def shipping(request):
-    return render(request,'shipping.html')
+    carts = request.user.all_cart_food.all()
+    subtotal=0
+    for cart in carts:
+        subtotal += cart.quantity * cart.food.price
+    shipping=100
+    total = subtotal+shipping
+    if request.method == 'POST':
+        data = request.POST.get('payment')
+        order = Order(price = total,user=request.user,payment=data)
+        order.save()
+        carts = request.user.all_cart_food.all()
+        for cart in carts:
+            cart.delete()
+        return HttpResponse('success')
+    return render(request,'shipping.html',context={'subtotal':subtotal,'shipping':shipping,'total':total})
+
+
+def search(request):
+    item = []
+    if request.method == 'POST':
+        data = request.POST.get('search')
+        restaurants = Restaurant.objects.filter(name__icontains = data)
+        foods = Food.objects.filter(name__icontains=data)
+        
+        for res in restaurants:
+            item.append(['rastaurant',res])
+        
+        for food in foods:
+            item.append(['food',food])
+
+    # paginator = Paginator(item, 4)
+    # page_number = request.GET.get('page')
+    # page_obj = paginator.get_page(page_number)
+
+    return render(request,'search_result.html',context={"page_obj":item})
