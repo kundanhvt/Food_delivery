@@ -15,7 +15,7 @@
           <form class="register-form" method='POST'>
             {% csrf_token %}
             {% if error == True %}
-              <p style="color:red";>Email is already available!!!</p>
+              <p style="color:red";>Email is already taken!!!</p>
             {% endif %}
             <input type="email" name='email' placeholder='email'>
             <input type="password" name='password' placeholder="password"/>

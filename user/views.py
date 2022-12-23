@@ -91,7 +91,7 @@ def profile_update(request):
                 user.image = file
             if user.address == None:
                 print('address is not available')
-                address = Address(area=data['area'],city=data['city'],state=data['state'],country=['country'], pincode=data['pincode'])
+                address = Address(area=data['area'],city=data['city'],state=data['state'],country=data['country'], pincode=data['pincode'])
                 address.save()
                 user.address = address
             else:

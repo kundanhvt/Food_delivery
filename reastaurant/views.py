@@ -137,6 +137,7 @@ def view_all_food(request):
         logging.warning(ex)
         return render(request,'error.html')
 
+@login_required
 def shipping(request):
     carts = request.user.all_cart_food.all()
     subtotal=0
@@ -158,18 +159,13 @@ def shipping(request):
 def search(request):
     item = []
     if request.method == 'POST':
-        data = request.POST.get('search')
-        restaurants = Restaurant.objects.filter(name__icontains = data)
+        data = request.POST.get('search').lower()
+        restaurants = Restaurant.objects.filter(name__icontains=data)
         foods = Food.objects.filter(name__icontains=data)
-        
+
         for res in restaurants:
             item.append(['rastaurant',res])
         
         for food in foods:
             item.append(['food',food])
-
-    # paginator = Paginator(item, 4)
-    # page_number = request.GET.get('page')
-    # page_obj = paginator.get_page(page_number)
-
     return render(request,'search_result.html',context={"page_obj":item})
