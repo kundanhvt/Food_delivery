@@ -4,6 +4,9 @@ from user.models import users
 import logging
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from geopy.geocoders import Nominatim
+from user.models import Address
+
 
 def restaurant(request, id):
     try:
@@ -15,7 +18,39 @@ def restaurant(request, id):
 
 def restaurants(request):
     try:
-        restaurants = Restaurant.objects.all().order_by('id')
+        geolocator = Nominatim(user_agent="kundan")
+        latitude = request.session.get('latitude',None)
+        longitude = request.session.get('longitude',None)
+        restaurants = None
+        if latitude == None or longitude == None:
+            restaurants = Restaurant.objects.all().order_by('id')
+        else:
+            print(latitude)
+            print(longitude)
+            location = geolocator.reverse(latitude+","+longitude)
+            address = location.raw['address']
+            city = None
+            state = None
+            if 'city' not in address.keys() and 'state' not in address.keys():
+                restaurants = Restaurant.objects.all().order_by('id')
+            elif 'city' not in address.keys():
+                state = address['state']
+                print('restaurant all')
+                add = Address.objects.filter(state__iexact=state).values_list('id')
+                restaurants = Restaurant.objects.filter(address__id__in=add).order_by('id')
+            elif 'state' not in address.keys():
+                city = address['city']
+                print('restaurant all')
+                add = Address.objects.filter(city__iexact=city).values_list('id')
+                restaurants = Restaurant.objects.filter(address__id__in=add).order_by('id')
+            else:
+                city = address['city']
+                state = address['state']
+                print(city)
+                print(state)
+                print('restaurant all')
+                add = Address.objects.filter(city__iexact=city,state__iexact=state).values_list('id')
+                restaurants = Restaurant.objects.filter(address__id__in=add).order_by('id')
         paginator = Paginator(restaurants, 4)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)

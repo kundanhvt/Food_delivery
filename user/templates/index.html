@@ -99,3 +99,33 @@
     </div>
 
     {% endblock content %}
+
+    {% block javascript %}
+    {% if flag %}
+
+    <script type="application/javascript" >
+      const successCallback = (position) => {
+          let data = new FormData();
+          data.append("csrfmiddlewaretoken", "{{csrf_token}}");
+          data.append('latitude', position.coords.latitude);
+          data.append('longitude', position.coords.longitude);
+            $.ajax({
+              type: 'POST',
+              url: {% url 'user:update_session' %},
+              success: function(e) { 
+                console.log(e);
+                window.location='{% url 'user:home' %}'
+              },
+              processData:false,
+              contentType:false,
+              data:data
+            });
+        }
+        const errorCallback = (error) => {
+        console.log(error);
+        };
+      navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    </script>
+    {% endif %}
+
+    {% endblock javascript %}

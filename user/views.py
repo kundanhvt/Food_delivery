@@ -8,17 +8,47 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from reastaurant.models import Image
 from django.contrib.auth.decorators import login_required
+from geopy.geocoders import Nominatim
 
 
 
 def home(request):
-    try:
+
+
+    if request.session.get('latitude',None) == None:
         restaurents = Restaurant.objects.all()[:10]
         foods = Food.objects.all()[:10]
-        return render(request, "index.html",context= {"restaurants": restaurents, "foods":foods})
-    except Exception as ex:
-        logging.warning(ex)
-        return render(request,'error.html')
+        return render(request, "index.html",context= {"restaurants": restaurents, "foods":foods, "flag":True})
+    else:
+        geolocator = Nominatim(user_agent="kundan")
+        latitude = request.session.get('latitude',None)
+        longitude = request.session.get('longitude',None)
+        location = geolocator.reverse(latitude+","+longitude)
+        address = location.raw['address']
+        city = None
+        state = None
+        restaurants = None
+        foods = None
+        if 'city' not in address.keys() and 'state' not in address.keys():
+            restaurants = Restaurant.objects.all().order_by('id')
+        elif 'city' not in address.keys():
+            state = address['state']
+            print('restaurant all')
+            add = Address.objects.filter(state__iexact=state).values_list('id')
+            restaurants = Restaurant.objects.filter(address__id__in=add).order_by('id')
+        elif 'state' not in address.keys():
+            city = address['city']
+            print('restaurant all')
+            add = Address.objects.filter(city__iexact=city).values_list('id')
+            restaurants = Restaurant.objects.filter(address__id__in=add).order_by('id')
+        else:
+            city = address['city']
+            state = address['state']
+            print('restaurant all')
+            add = Address.objects.filter(city__iexact=city,state__iexact=state).values_list('id')
+            restaurants = Restaurant.objects.filter(address__id__in=add).order_by('id')
+            foods = Food.objects.filter(restaurants_foods__id__in = restaurants.values_list('id'))[:10]
+        return render(request, "index.html",context= {"restaurants": restaurants, "foods":foods, "flag":False})
 
 def custom_login(request):
     if request.method == 'POST':
@@ -114,3 +144,12 @@ def profile(request):
 
 def page404(request, exception):
     return render(request,'page404.html')
+
+def update_session(request):
+    data = request.POST.dict()
+    print(data)
+    request.session['latitude'] = data['latitude']
+    request.session['longitude'] = data['longitude']
+    return HttpResponse('success!!')
+
+
