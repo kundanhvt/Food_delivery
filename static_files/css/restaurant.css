@@ -1,0 +1,16 @@
+.carousel-item img{
+    height: 20rem;
+}
+
+.resto-info
+{
+    padding-left: 4rem;
+    text-shadow: 2px 3px 3px gray;
+    display: inline-block;
+    
+}
+p.restro-txt
+{
+    padding-left: 2rem;
+    color:rgb(105, 102, 102);
+}

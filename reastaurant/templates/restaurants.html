@@ -2,6 +2,8 @@
 
 {% block content %}
 
+  {% if page_obj|length > 1 %}
+
     {% for page in page_obj %}
     <div class="card mb-3">
         <div class="row no-gutters">
@@ -17,6 +19,9 @@
         </div>
       </div>
     {% endfor %}
+    {% else %}
+    <h5>Sorry!!! Cannot searve at your location!!! </h5>
+    {% endif %}
 
 
     <nav aria-label="...">
@@ -49,5 +54,4 @@
           {%  endif %}
         </ul>
       </nav>
-
       {% endblock content %}

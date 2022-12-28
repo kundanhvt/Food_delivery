@@ -51,16 +51,13 @@
       </div>
     </div>
 
-
-
-
-
-
+    <div class="content" id = 'content'>
     
     <br><br>
     <div class="restureant">
       <a href="{% url 'reastaurent:restaurant_all' %}" class="text-decoration-none"><h3>Restaurants</h3></a>
         <div class="scrollmenu">
+          {% if reastaurants|length > 1 %}
 
           {% for restaurant in restaurants  %}
           <div class="card">
@@ -75,6 +72,9 @@
             </div>
           </div>
           {% endfor %} 
+          {% else %}
+          <h2>Sorry!! No Reastoreant is available at your area</h2>
+          {% endif %}
         </div> 
     </div>
 
@@ -85,6 +85,7 @@
     <div class="deliciousfood">
       <a href="{% url 'reastaurent:view_all_food' %}" class="text-decoration-none"><h3>Delicious Food</h3></a>
         <div class="scrollmenu">
+          {% if foods|length > 1 %}
           {% for food in foods  %}
           <div class="card">
             <a href="{% url 'reastaurent:food' food.id %}">
@@ -95,14 +96,17 @@
             </div>
           </div>
           {% endfor %} 
+          {% else %}
+          <h5>Sorry !! No food is available at your area!!</h5>
+          {% endif %}
         </div>
     </div>
+
+  </div>
 
     {% endblock content %}
 
     {% block javascript %}
-    {% if flag %}
-
     <script type="application/javascript" >
       const successCallback = (position) => {
           let data = new FormData();
@@ -113,8 +117,7 @@
               type: 'POST',
               url: {% url 'user:update_session' %},
               success: function(e) { 
-                console.log(e);
-                window.location='{% url 'user:home' %}'
+                document.getElementById('content').innerHTML = e;
               },
               processData:false,
               contentType:false,
@@ -124,8 +127,7 @@
         const errorCallback = (error) => {
         console.log(error);
         };
-      navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+      navigator.geolocation.getCurrentPosition(successCallback, errorCallback,{maximumAge:60000, timeout:5000, enableHighAccuracy:true});
     </script>
-    {% endif %}
 
     {% endblock javascript %}

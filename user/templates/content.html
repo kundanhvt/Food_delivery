@@ -1,0 +1,44 @@
+<br><br>
+<div class="restureant">
+  <a href="{% url 'reastaurent:restaurant_all' %}" class="text-decoration-none"><h3>Restaurants</h3></a>
+    <div class="scrollmenu">
+        {% if reastaurants|length > 1 %}
+      {% for restaurant in restaurants  %}
+      <div class="card">
+        <a href="{% url 'reastaurent:restaurant' restaurant.id %}">
+          <img class="card-im card-img-top" src="{{restaurant.image.all.0.image.url}}" alt="Card image cap">
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{restaurant.name}} <span>{{restaurant.rating}} <i class="fa-solid fa-star"></i></span></h5>
+          
+          
+          <p class="card-text">Address : {{restaurant.address.area}},{{restaurant.address.city}}</p>  
+        </div>
+      </div>
+      {% endfor %} 
+      {% else %}
+      <h5>Sorry!! No Reastoreant is available at your area</h5>
+      {% endif %}
+    </div> 
+</div>
+
+<br><br>
+<div class="deliciousfood">
+  <a href="{% url 'reastaurent:view_all_food' %}" class="text-decoration-none"><h3>Delicious Food</h3></a>
+    <div class="scrollmenu">
+        {% if foods|length > 1 %}
+      {% for food in foods  %}
+      <div class="card">
+        <a href="{% url 'reastaurent:food' food.id %}">
+          <img class="card-im card-img-top" src="{{food.image.all.0.image.url}}" alt="Card image cap">
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{food.name}} <span><i class="fa-solid fa-indian-rupee-sign"></i> {{food.price}}</span></h5>
+        </div>
+      </div>
+      {% endfor %} 
+      {% else %}
+        <h5>Sorry!! No food are available at your area!!</h5>
+      {% endif %}
+    </div>
+</div>

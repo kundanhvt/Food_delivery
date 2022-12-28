@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from geopy.geocoders import Nominatim
 from user.models import Address
+import geopy.distance
 
 
 def restaurant(request, id):
@@ -176,9 +177,39 @@ def view_all_food(request):
 def shipping(request):
     carts = request.user.all_cart_food.all()
     subtotal=0
+    resadd = carts[0].restaurant.address
+    coords_1 = None
+    coords_2 = None
+    if resadd.latitude == None or resadd.longitude == None:
+        city = resadd.city
+        state = resadd.state
+        geolocator = Nominatim(user_agent="kundan")
+        location = geolocator.geocode(city+' '+state)
+        resadd.latitude = location.latitude
+        resadd.longitude = location.longitude
+        resadd.save()
+        coords_1 = (location.latitude, location.longitude)
+    else:
+        coords_1 = (resadd.latitude, resadd.longitude)
+
+
+    if request.user.address.latitude == None or request.user.address.longitude == None:
+        city = request.user.address.city
+        state = request.user.address.state
+        ulocation = geolocator.geocode(city+' '+state)
+        request.user.address.latitude = ulocation.latitude
+        request.user.address.longitude = ulocation.longitude
+        request.user.address.save()
+        coords_2 = (ulocation.latitude, ulocation.longitude)
+    else:
+        coords_2 = (request.user.address.latitude, request.user.address.longitude)
+
+    distance = geopy.distance.geodesic(coords_1, coords_2).km
     for cart in carts:
         subtotal += cart.quantity * cart.food.price
-    shipping=100
+
+
+    shipping=int(distance * 50)
     total = subtotal+shipping
     if request.method == 'POST':
         data = request.POST.get('payment')
