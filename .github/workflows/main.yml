@@ -57,4 +57,4 @@ jobs:
         with:
           app-name: 'food-delivery2'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_c10d35e98a104d72b37d3b3db5bb317e }
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_c10d35e98a104d72b37d3b3db5bb317e }}
