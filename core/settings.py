@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'address',
     'reastaurant',
     'user',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -140,6 +142,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "user.users"
 GOOGLE_API_KEY = 'AIzaSyD--your-google-maps-key-SjQBE'
-
+CSRF_TRUSTED_ORIGINS = ['https://'+ os.environ['WEBSITE_HOSTNAME']]
 
  
